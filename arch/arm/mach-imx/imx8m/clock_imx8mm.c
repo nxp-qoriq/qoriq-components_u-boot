@@ -49,6 +49,7 @@ int enable_i2c_clk(unsigned char enable, unsigned i2c_num)
 
 static struct imx_int_pll_rate_table imx8mm_fracpll_tbl[] = {
 	PLL_1443X_RATE(1000000000U, 250, 3, 1, 0),
+	PLL_1443X_RATE(900000000U, 75, 2, 0, 0),
 	PLL_1443X_RATE(800000000U, 200, 3, 1, 0),
 	PLL_1443X_RATE(750000000U, 250, 2, 2, 0),
 	PLL_1443X_RATE(650000000U, 325, 3, 2, 0),
@@ -545,7 +546,7 @@ int clock_init(void)
 	clock_set_target_val(ARM_A53_CLK_ROOT, CLK_ROOT_ON |
 			     CLK_ROOT_SOURCE_SEL(2));
 
-	intpll_configure(ANATOP_ARM_PLL, MHZ(1800));
+	intpll_configure(ANATOP_ARM_PLL, MHZ(1600));
 
 	/* Bypass CCM A53 ROOT, Switch to ARM PLL -> MUX-> CPU */
 	clock_set_target_val(CORE_SEL_CFG, CLK_ROOT_SOURCE_SEL(1));

@@ -115,6 +115,10 @@ void ddrphy_init_set_dfi_clk(unsigned int drate)
 		dram_pll_init(MHZ(933));
 		dram_disable_bypass();
 		break;
+	case 3600:
+		dram_pll_init(MHZ(900));
+		dram_disable_bypass();
+		break;
 	case 3200:
 		dram_pll_init(MHZ(800));
 		dram_disable_bypass();
@@ -160,6 +164,7 @@ void ddrphy_init_set_dfi_clk(unsigned int drate)
 		dram_enable_bypass(MHZ(100));
 		break;
 	default:
+		printf("DDRINFO: failed to match rate: %dMTS\n", drate);
 		return;
 	}
 }
