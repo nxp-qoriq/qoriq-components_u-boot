@@ -29,7 +29,7 @@
 #include <imx_sip.h>
 #include <linux/arm-smccc.h>
 #include <mmc.h>
-#include <../../../../../../../../work-shared/imx8mp-rfnm/kernel-source/include/linux/rfnm-shared.h>
+#include "rfnm-shared.h"
 
 DECLARE_GLOBAL_DATA_PTR;
 
