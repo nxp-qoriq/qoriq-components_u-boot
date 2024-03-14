@@ -454,31 +454,34 @@ int board_phy_config(struct phy_device *phydev)
 #define MIPI				15
 
 static iomux_v3_cfg_t ss_mux_rfnm[] = {
-	MX8MP_PAD_GPIO1_IO12__GPIO1_IO12 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	MX8MP_PAD_NAND_READY_B__GPIO3_IO16 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	//MX8MP_PAD_SPDIF_EXT_CLK__GPIO5_IO05 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	MX8MP_PAD_SD2_WP__GPIO2_IO20 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	MX8MP_PAD_GPIO1_IO10__GPIO1_IO10 | MUX_PAD_CTRL(NO_PAD_CTRL),
-	MX8MP_PAD_SAI1_MCLK__GPIO4_IO20 | MUX_PAD_CTRL(NO_PAD_CTRL),
+	MX8MP_PAD_GPIO1_IO05__GPIO1_IO05 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	MX8MP_PAD_GPIO1_IO07__GPIO1_IO07 | MUX_PAD_CTRL(NO_PAD_CTRL),
+	MX8MP_PAD_SAI1_MCLK__GPIO4_IO20 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	MX8MP_PAD_GPIO1_IO08__GPIO1_IO08 | MUX_PAD_CTRL(NO_PAD_CTRL),
 
-	MX8MP_PAD_GPIO1_IO11__GPIO1_IO11 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	MX8MP_PAD_GPIO1_IO06__GPIO1_IO06 | MUX_PAD_CTRL(NO_PAD_CTRL),
+	MX8MP_PAD_GPIO1_IO11__GPIO1_IO11 | MUX_PAD_CTRL(NO_PAD_CTRL),
+	MX8MP_PAD_GPIO1_IO12__GPIO1_IO12 | MUX_PAD_CTRL(NO_PAD_CTRL),
 
 };
 
-#define PWR_EN_33V IMX_GPIO_NR(1, 12)
+
 #define Si5510_PWR_EN IMX_GPIO_NR(3, 16)
 //#define ENET_nRST IMX_GPIO_NR(5, 5)
 #define PWR_EN_LA IMX_GPIO_NR(2, 20)
-#define PWR_EN_18V IMX_GPIO_NR(1, 10)
+#define PWR_EN_215V IMX_GPIO_NR(1, 10)
+#define PWR_EN_18V_RB IMX_GPIO_NR(1, 5)
 #define PWR_EN_09V IMX_GPIO_NR(1, 7)
 #define Si5510_RST IMX_GPIO_NR(4, 20)
 #define LA_BOOTSTRAP_EN IMX_GPIO_NR(1, 8)
 
 #define PWR_EN_33V_RBA IMX_GPIO_NR(1, 6)
 #define PWR_EN_33V_RBB IMX_GPIO_NR(1, 11)
+#define PWR_EN_375V IMX_GPIO_NR(1, 12)
 
 
 int board_init(void)
@@ -518,22 +521,16 @@ int board_init(void)
 
 	gpio_request(Si5510_RST, "Si5510_RST");
 	gpio_direction_output(Si5510_RST, 0);
-
-	gpio_request(PWR_EN_33V, "PWR_EN_33V");
-	gpio_direction_output(PWR_EN_33V, 1);
 	//gpio_direction_input(PWR_EN_33V);
 
 	gpio_request(Si5510_PWR_EN, "Si5510_PWR_EN");
 	gpio_direction_output(Si5510_PWR_EN, 1);
-	//gpio_direction_input(Si5510_PWR_EN);
 
 	gpio_request(PWR_EN_LA, "PWR_EN_LA");
 	gpio_direction_output(PWR_EN_LA, 0);
-	//gpio_direction_input(PWR_EN_LA);
 
-	gpio_request(PWR_EN_18V, "PWR_EN_18V");
-	gpio_direction_output(PWR_EN_18V, 1);
-	//gpio_direction_input(PWR_EN_18V);
+	gpio_request(PWR_EN_215V, "PWR_EN_215V");
+	gpio_direction_output(PWR_EN_215V, 1);
 
 	gpio_request(PWR_EN_09V, "PWR_EN_09V");
 	gpio_direction_output(PWR_EN_09V, 0);
@@ -541,13 +538,18 @@ int board_init(void)
 	gpio_request(LA_BOOTSTRAP_EN, "LA_BOOTSTRAP_EN");
 	gpio_direction_output(LA_BOOTSTRAP_EN, 1);
 
+	gpio_request(PWR_EN_18V_RB, "PWR_EN_18V_RB");
+	gpio_direction_output(PWR_EN_18V_RB, 1);
+
 	gpio_request(PWR_EN_33V_RBA, "PWR_EN_33V_RBA");
 	gpio_direction_output(PWR_EN_33V_RBA, 1);
 
 	// breaks boot on v1 for reasons unknown
-	//gpio_request(PWR_EN_33V_RBB, "PWR_EN_33V_RBB");
-	//gpio_direction_output(PWR_EN_33V_RBB, 1);
+	gpio_request(PWR_EN_33V_RBB, "PWR_EN_33V_RBB");
+	gpio_direction_output(PWR_EN_33V_RBB, 1);
 
+	gpio_request(PWR_EN_375V, "PWR_EN_375V");
+	gpio_direction_output(PWR_EN_375V, 1);
 	
 
 
