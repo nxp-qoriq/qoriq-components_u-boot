@@ -16,6 +16,11 @@
 		bootargs = "console=ttymxc1,115200 earlycon=ec_imx6q,0x30890000,115200";
 		stdout-path = &uart2;
 	};
+
+	bootconfig: bootconfig@A3400000 {
+		reg = <0 0xA3400000 0 0x400000>;
+		no-map;
+	};
 	
 	memory@40000000 {
 		device_type = "memory";
@@ -56,6 +61,7 @@
 		startup-delay-us = <100>;
 		off-on-delay-us = <12000>;
 	};
+
 };
 
 &eqos {

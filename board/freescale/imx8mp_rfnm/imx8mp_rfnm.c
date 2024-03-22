@@ -483,14 +483,34 @@ static iomux_v3_cfg_t ss_mux_rfnm[] = {
 
 int board_init(void)
 {
-	struct arm_smccc_res res;
+        int ret, boot_cfg;
+        struct fdt_resource res;
 
 	imx_iomux_v3_setup_multiple_pads(ss_mux_rfnm, ARRAY_SIZE(ss_mux_rfnm));
+
+        boot_cfg = fdt_path_offset(gd->fdt_blob, RFNM_BOOT_CONFIG_NODE_NAME);
+        if (boot_cfg < 0) {
+                printf("%s: Missing %s node\n", __func__,RFNM_BOOT_CONFIG_NODE_NAME);
+                return -EINVAL;
+        }
+        else {
+               debug("%s: Found %s node\n", __func__,RFNM_BOOT_CONFIG_NODE_NAME);
+        }
+
+        ret = fdt_get_resource(gd->fdt_blob, boot_cfg, "reg", 0, &res);
+        if (ret != 0) {
+                printf("%s: Unable to decode %s node\n", __func__,RFNM_BOOT_CONFIG_NODE_NAME);
+                return -EINVAL;
+        }
+
+        printf("%s: boot config  start address  %llx\n", __func__,(phys_size_t)res.start);
+        printf("%s: boot config  mem size %llx\n", __func__,
+              (phys_size_t)(res.end - res.start + 1));
 
 	// init memory for bootconfig struct
 	int i;
 	for(i = 0; i < 1024; i++) {
-		writel(0xffffffff, RFNM_BOOTCONFIG_PHYADDR + (i*4));
+		writel(0xffffffff, (phys_size_t)res.start + (i*4));
 	}
 	
 
