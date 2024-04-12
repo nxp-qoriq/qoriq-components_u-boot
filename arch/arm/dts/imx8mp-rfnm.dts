@@ -17,8 +17,8 @@
 		stdout-path = &uart2;
 	};
 
-	bootconfig: bootconfig@A3400000 {
-		reg = <0 0xA3400000 0 0x400000>;
+	bootconfig: bootconfig@bec00000 {
+		reg = <0 0xbec00000 0 0x400000>;
 		no-map;
 	};
 	
