@@ -5,6 +5,7 @@
 #
 
 obj-y += imx8mp_rfnm.o
+obj-y += rfnm_wsled.o
 
 ifdef CONFIG_SPL_BUILD
 obj-y += spl.o

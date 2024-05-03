@@ -27,6 +27,7 @@
 #include <fsl_esdhc_imx.h>
 #include <mmc.h>
 #include <asm/arch/ddr.h>
+#include "rfnm_wsled.h"
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -161,75 +162,6 @@ static iomux_v3_cfg_t ss_mux_rfnm_pwr[] = {
 #define LED_DIN2 IMX_GPIO_NR(3, 8)
 */
 
-#define NOP1() asm volatile("nop");
-#define NOP2()   NOP1()  NOP1()
-#define NOP4()   NOP2()  NOP2()
-#define NOP8()   NOP4()  NOP4()
-#define NOP16()  NOP8()  NOP8()
-#define NOP32() NOP16() NOP16()
-#define NOP64() NOP32() NOP32()
-
-void rfnm_wsled(uint32_t reg, uint32_t led1, uint32_t led2, uint32_t led3) {
-
-	volatile unsigned int *addr;
-	addr = 0x30220000;
-
-	uint32_t initial = *addr;
-	uint32_t cond_high = initial | reg;
-	uint32_t cond_low = initial & ~(reg);
-
-	// 1000 = 1.06us
-	// 200 = 160ns
-
-	int z;
-
-	uint32_t send[4];
-	send[0] = 0;
-	send[1] = led1;
-	send[2] = led2;
-	send[3] = led3;
-
-	*addr = cond_low; for(z = 0; z < 5000; z++) asm volatile ("nop");
-
-	uint8_t current_bit = 0;
-	uint8_t current_led = 0;
-
-	uint8_t bit = (send[current_led] & (1 << current_bit)) >> current_bit;
-
-	for(current_led = 0; current_led < 4; current_led++) {
-		for(current_bit = 0; current_bit < 24; current_bit++) {
-
-			if(current_led != 0) {
-				*addr = cond_high; // reset condition while prefetching the loop
-			}
-
-			bit = (send[current_led] & (1 << current_bit)) >> current_bit;
-
-			// total bit length = 1.25us +- 600ns
-			// send one  -> high for 800 +- 150 ns; then low for 450 +- 150ns
-			// send zero -> high for 400 +- 150 ns; then low for 850 +- 150ns
-
-
-			if(bit) {
-				NOP64() NOP32() NOP16()
-
-			} else {
-				NOP16() NOP4()
-			}
-
-			*addr = cond_low;
-
-			if(bit) {
-				NOP64()
-			} else {
-				NOP64() NOP32() NOP8()
-			}
-
-		}
-	}
-
-	*addr = initial;
-}
 
 
 void board_init_f(ulong dummy)
@@ -267,8 +199,8 @@ void board_init_f(ulong dummy)
 
 	*addr = *addr | (1 << 16);
 
-	rfnm_wsled(0x100, 0x00ff00, 0x000000, 0x000000);
-	rfnm_wsled(0x80, 0x00ff00, 0x000000, 0x000000);
+	rfnm_wsled_spl(0x100, 0x00ff00, 0x000000, 0x000000);
+	rfnm_wsled_spl(0x80, 0x00ff00, 0x000000, 0x000000);
 
 	board_early_init_f();
 

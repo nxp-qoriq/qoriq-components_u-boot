@@ -30,6 +30,8 @@
 #include <linux/arm-smccc.h>
 #include <mmc.h>
 #include "rfnm-shared.h"
+#include <command.h>
+#include "rfnm_wsled.h"
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -644,3 +646,62 @@ int is_recovery_key_pressing(void)
 }
 #endif /* CONFIG_ANDROID_RECOVERY */
 #endif /* CONFIG_FSL_FASTBOOT */
+
+
+//extern void rfnm_wsled(uint32_t reg, uint32_t led1, uint32_t led2, uint32_t led3);
+
+static int rfnm_wsled_uboot_cmd(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[]) {
+	
+	uint32_t which;
+	uint8_t r, g, b;
+
+	uint32_t addr = 0x100;
+
+
+	if (argc != 5)
+		return CMD_RET_USAGE;
+
+	which = simple_strtoul(argv[1], NULL, 16);
+	r = simple_strtoul(argv[2], NULL, 16);
+	g = simple_strtoul(argv[3], NULL, 16);
+	b = simple_strtoul(argv[4], NULL, 16);
+
+
+	if(which) {
+		addr = 0x80;
+	}
+
+	uint32_t c = (g << 16) | (r << 8) | (b << 0);
+
+	rfnm_wsled(addr, c, 0x000000, 0x000000);
+
+	return 0;
+}
+U_BOOT_CMD(rfnm_set_led, 5, 0, rfnm_wsled_uboot_cmd,
+	"Setup RFNM LEDs",
+	"[led_id] [r] [g] [b]\n"
+	"\t- Setup LEDs, \n"
+	"\t  0-255 input"
+);
+
+
+static int rfnm_uboot_is_rescue_mode(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[]) {
+	
+	if (argc != 1)
+		return CMD_RET_USAGE;
+	
+	volatile unsigned int *addr;
+	addr = 0x30390070;
+	uint32_t SRC_SBMR2 = *addr;
+
+	if(SRC_SBMR2 & (0xf << 24)) {
+		return 1;
+	}
+
+	return 0;
+}
+U_BOOT_CMD(rfnm_is_rescue_mode, 1, 0, rfnm_uboot_is_rescue_mode,
+	"Check if boot pins are set to rescue",
+	"[led_id] [r] [g] [b]\n"
+	"\t- Check if boot pins are set to rescue \n"
+);
