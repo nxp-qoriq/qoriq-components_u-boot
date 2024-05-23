@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0+ */
 /*
- * Copyright 2019 NXP
+ * Copyright 2019, 2024 NXP
  */
 
 #ifndef __IMX8MP_RFNM_H
