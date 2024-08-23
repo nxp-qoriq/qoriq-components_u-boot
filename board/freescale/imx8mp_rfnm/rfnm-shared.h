@@ -7,6 +7,7 @@
 #define RFNM_DAUGHTERBOARD_GRANITA (2)
 #define RFNM_DAUGHTERBOARD_LIME (3)
 #define RFNM_MOTHERBOARD_BLUE (4)
+#define RFNM_DAUGHTERBOARD_YUCCA (5)
 
 #define RFNM_BOARD_ID_TO_USER_READABLE_NAME (char[][30]){"", "Breakout", "Granita", "Lime", "Motherboard"}
 
@@ -145,6 +146,7 @@ struct rfnm_dgb {
 	uint8_t dac_ifs;
 	uint8_t adc_iqswap[2];
 	uint8_t dac_iqswap[2];
+	int (*reset)(struct rfnm_dgb *);// Function pointer for reset sequence
 };
 
 RFNM_PACKED_STRUCT(
